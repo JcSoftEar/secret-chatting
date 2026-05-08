@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理后台</title>
+    <link rel="stylesheet" href="/static/css/admin.css">
+</head>
+<body>
+    <!-- 登录页 -->
+    <div id="loginPage" class="login-container">
+        <div class="login-card">
+            <h1 class="login-title">管理员登录</h1>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">用户名</label>
+                    <input type="text" id="username" placeholder="请输入用户名" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <input type="password" id="password" placeholder="请输入密码" required>
+                </div>
+                <button type="submit" class="btn">登录</button>
+                <div id="loginError" class="error-message"></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 管理页 -->
+    <div id="adminPage" class="admin-container" style="display: none;">
+        <!-- 左侧导航栏 -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-title">房间列表</div>
+            </div>
+            <div class="room-list" id="roomList"></div>
+            <div class="sidebar-footer">
+                <button class="logout-btn" id="logoutBtn">退出登录</button>
+            </div>
+        </div>
+
+        <!-- 中间消息区域 -->
+        <div class="messages-panel">
+            <div class="messages-header">
+                <div class="current-room-name" id="currentRoomName">请选择房间</div>
+            </div>
+            <div class="messages-content" id="messagesContent"></div>
+            <div class="messages-input" id="messagesInput" style="display: none;">
+                <div class="input-wrapper">
+                    <textarea id="adminMessageInput" placeholder="输入消息..." rows="1"></textarea>
+                </div>
+                <button class="send-btn" id="adminSendBtn" disabled>发送</button>
+            </div>
+        </div>
+
+        <!-- 右侧设置面板 -->
+        <div class="settings-panel">
+            <div class="settings-header">
+                <div class="settings-title">房间设置</div>
+            </div>
+            <div class="settings-content">
+                <!-- 创建房间 -->
+                <div class="settings-section">
+                    <div class="section-title">创建新房间</div>
+                    <form id="createRoomForm">
+                        <div class="form-group">
+                            <label for="newRoomId">房间号</label>
+                            <input type="text" id="newRoomId" placeholder="请输入房间号" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="newRoomName">房间名称</label>
+                            <input type="text" id="newRoomName" placeholder="请输入房间名称" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="newRoomPassword">房间密码</label>
+                            <input type="password" id="newRoomPassword" placeholder="请输入房间密码" required>
+                        </div>
+                        <button type="submit" class="btn-small">创建房间</button>
+                    </form>
+                </div>
+
+                <!-- 房间信息 -->
+                <div id="settingsPlaceholder" class="no-selection">
+                    <div class="no-selection-icon">📋</div>
+                    <div>请选择房间查看详情</div>
+                </div>
+                <div id="roomSettings" style="display: none;">
+                    <div class="settings-section">
+                        <div class="section-title">当前房间信息</div>
+                        <div class="room-info">
+                            <div class="room-info-item">
+                                <div class="room-info-label">房间号</div>
+                                <div class="room-info-value" id="selectedRoomId"></div>
+                            </div>
+                            <div class="room-info-item">
+                                <div class="room-info-label">房间名称</div>
+                                <div class="room-info-value" id="selectedRoomName"></div>
+                            </div>
+                        </div>
+                        <button class="btn-small btn-danger" id="deleteRoomBtn">删除房间</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="/static/js/admin.js"></script>
+</body>
+</html>
