@@ -23,7 +23,6 @@ secret-chatting/
 ├── app.py              # 应用入口，路由与 SocketIO 事件
 ├── config.py           # 配置管理
 ├── models.py           # 数据模型（Room, Message, Admin）
-├── init_db.py          # 数据库初始化脚本
 ├── requirements.txt    # Python 依赖
 ├── .env                # 环境变量
 ├── static/
@@ -35,7 +34,8 @@ secret-chatting/
 │       └── admin.js    # 管理端逻辑
 └── templates/
     ├── index.html      # 客户端页面
-    └── admin.html      # 管理端页面
+    ├── admin.html      # 管理端页面
+    └── setup.html      # 系统初始化页面
 ```
 
 ## 快速开始
@@ -46,28 +46,31 @@ secret-chatting/
 pip install -r requirements.txt
 ```
 
-### 2. 初始化数据库
-
-```bash
-python init_db.py
-```
-
-默认创建：
-- 测试房间：`room123` / `password123`
-- 管理员账号：`admin` / `admin123`
-
-### 3. 启动服务
+### 2. 启动服务
 
 ```bash
 python app.py
 ```
 
+### 3. 系统初始化
+
+首次启动时，访问任意页面会自动跳转到初始化页面（`/setup`），需完成以下步骤：
+
+1. **创建数据库** — 自动创建 SQLite 数据库文件
+2. **初始化数据表** — 自动创建 Room、Message、Admin 三张表
+3. **创建管理员** — 设置管理员账号和密码（密码不少于6位）
+
+初始化完成后自动跳转到管理后台登录页。
+
+> 系统已初始化后，访问 `/setup` 会自动跳转到管理后台。
+
 ### 4. 访问页面
 
-| 页面 | 地址 |
-|------|------|
-| 聊天室 | http://localhost:5000 |
-| 管理后台 | http://localhost:5000/admin |
+| 页面 | 地址 | 说明 |
+|------|------|------|
+| 聊天室 | http://localhost:5000 | 用户聊天入口 |
+| 系统初始化 | http://localhost:5000/setup | 首次使用时自动跳转 |
+| 管理后台 | http://localhost:5000/admin | 管理员登录后管理房间 |
 
 ## 配置说明
 
