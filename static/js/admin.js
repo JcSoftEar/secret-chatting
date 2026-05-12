@@ -106,9 +106,27 @@ async function selectRoom(room) {
     await loadRoomHistory(room.room_id);
     joinSocketRoom(room.room_id);
     showRoomSettings();
+    generateQRCode(room);
     
     document.getElementById('messagesInput').style.display = 'flex';
     initMessageInput();
+}
+
+function generateQRCode(room) {
+    const qrcodeEl = document.getElementById('qrcode');
+    qrcodeEl.innerHTML = '';
+    
+    const baseUrl = window.location.origin;
+    const link = `${baseUrl}/?room=${encodeURIComponent(room.room_id)}&pwd=${encodeURIComponent(room.password)}`;
+    
+    new QRCode(qrcodeEl, {
+        text: link,
+        width: 180,
+        height: 180,
+        colorDark: '#333333',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.M
+    });
 }
 
 async function loadRoomHistory(roomId) {
@@ -311,6 +329,30 @@ function initSettings() {
             }
         } catch (error) {
             alert('删除失败，请稍后重试');
+        }
+    });
+
+    const copyLinkBtn = document.getElementById('copyLinkBtn');
+    copyLinkBtn.addEventListener('click', async () => {
+        if (!currentRoom) {
+            alert('请先选择一个房间');
+            return;
+        }
+
+        const baseUrl = window.location.origin;
+        const link = `${baseUrl}/?room=${encodeURIComponent(currentRoom.room_id)}&pwd=${encodeURIComponent(currentRoom.password)}`;
+
+        try {
+            await navigator.clipboard.writeText(link);
+            alert('邀请链接已复制到剪贴板');
+        } catch (error) {
+            const textarea = document.createElement('textarea');
+            textarea.value = link;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            alert('邀请链接已复制到剪贴板');
         }
     });
 }

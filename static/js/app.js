@@ -177,4 +177,16 @@ function addMessage(data) {
 
 document.addEventListener('DOMContentLoaded', () => {
     initEntryPage();
+    checkUrlParams();
 });
+
+function checkUrlParams() {
+    const params = new URLSearchParams(window.location.search);
+    const roomId = params.get('room');
+    const password = params.get('pwd');
+
+    if (roomId && password) {
+        document.getElementById('roomId').value = roomId;
+        document.getElementById('password').value = password;
+    }
+}

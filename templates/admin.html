@@ -97,7 +97,15 @@
                                 <div class="room-info-value" id="selectedRoomName"></div>
                             </div>
                         </div>
+                        <button class="btn-small btn-copy" id="copyLinkBtn">复制邀请链接</button>
+                        <div style="height: 10px;"></div>
                         <button class="btn-small btn-danger" id="deleteRoomBtn">删除房间</button>
+                        <div class="qrcode-section">
+                            <div class="section-title">邀请二维码</div>
+                            <div class="qrcode-wrapper" id="qrcodeWrapper">
+                                <div id="qrcode"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -105,6 +113,7 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="/static/js/admin.js"></script>
 </body>
 </html>

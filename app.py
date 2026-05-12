@@ -85,7 +85,7 @@ def create_app(config_class=Config):
     @app.route('/admin/rooms', methods=['GET'])
     def get_rooms():
         rooms = Room.query.all()
-        room_list = [{'room_id': room.room_id, 'name': room.name} for room in rooms]
+        room_list = [{'room_id': room.room_id, 'name': room.name, 'password': room.password} for room in rooms]
         return jsonify({'success': True, 'rooms': room_list})
     
     @app.route('/admin/rooms', methods=['POST'])
