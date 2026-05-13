@@ -2,6 +2,9 @@ let socket = null;
 let currentRoom = null;
 let isLoggedIn = false;
 let adminCredentials = null;
+let unreadCounts = {};
+let originalTitle = document.title;
+let titleBlinkInterval = null;
 
 function showError(elementId, message) {
     const errorEl = document.getElementById(elementId);
@@ -75,9 +78,13 @@ function renderRoomList(rooms) {
         const item = document.createElement('div');
         item.className = 'room-item';
         item.dataset.roomId = room.room_id;
+        const count = unreadCounts[room.room_id] || 0;
         item.innerHTML = `
-            <div class="room-name">${room.name}</div>
-            <div class="room-id">${room.room_id}</div>
+            <div class="room-item-info">
+                <div class="room-name">${room.name}</div>
+                <div class="room-id">${room.room_id}</div>
+            </div>
+            ${count > 0 ? `<div class="unread-badge">${count > 99 ? '99+' : count}</div>` : ''}
         `;
         item.addEventListener('click', () => selectRoom(room));
         listEl.appendChild(item);
@@ -88,6 +95,67 @@ function initSocket() {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const url = `${protocol}//${window.location.host}`;
     socket = io(url);
+
+    socket.on('connect', () => {
+        if (adminCredentials) {
+            socket.emit('admin_connect', {
+                username: adminCredentials.username,
+                password: adminCredentials.password
+            });
+        }
+    });
+
+    socket.on('admin_new_msg', (data) => {
+        if (currentRoom && data.room_id === currentRoom.room_id) {
+            addMessageToView(data);
+        } else {
+            if (data.sender_name !== '系统') {
+                unreadCounts[data.room_id] = (unreadCounts[data.room_id] || 0) + 1;
+                updateRoomListBadges();
+                startTitleBlink(data);
+            }
+        }
+    });
+}
+
+function startTitleBlink(data) {
+    if (titleBlinkInterval) clearInterval(titleBlinkInterval);
+    let show = true;
+    titleBlinkInterval = setInterval(() => {
+        document.title = show ? `【新消息】${data.sender_name}: ${data.content.substring(0, 20)}` : originalTitle;
+        show = !show;
+    }, 800);
+}
+
+function stopTitleBlink() {
+    if (titleBlinkInterval) {
+        clearInterval(titleBlinkInterval);
+        titleBlinkInterval = null;
+    }
+    document.title = originalTitle;
+}
+
+function updateRoomListBadges() {
+    document.querySelectorAll('.room-item').forEach(item => {
+        const roomId = item.dataset.roomId;
+        const existingBadge = item.querySelector('.unread-badge');
+        const count = unreadCounts[roomId] || 0;
+
+        if (count > 0) {
+            if (existingBadge) {
+                existingBadge.textContent = count > 99 ? '99+' : count;
+            } else {
+                const badge = document.createElement('div');
+                badge.className = 'unread-badge';
+                badge.textContent = count > 99 ? '99+' : count;
+                item.appendChild(badge);
+            }
+            item.classList.add('has-unread');
+        } else {
+            if (existingBadge) existingBadge.remove();
+            item.classList.remove('has-unread');
+        }
+    });
 }
 
 async function selectRoom(room) {
@@ -99,6 +167,10 @@ async function selectRoom(room) {
     });
 
     currentRoom = room;
+    unreadCounts[room.room_id] = 0;
+    updateRoomListBadges();
+    stopTitleBlink();
+
     document.getElementById('currentRoomName').textContent = room.name;
     document.getElementById('selectedRoomId').textContent = room.room_id;
     document.getElementById('selectedRoomName').textContent = room.name;
@@ -203,18 +275,10 @@ function addMessageToView(data) {
 function joinSocketRoom(roomId) {
     if (!socket || !adminCredentials) return;
 
-    socket.off('new_msg');
-
     socket.emit('admin_join', {
         username: adminCredentials.username,
         password: adminCredentials.password,
         room_id: roomId
-    });
-
-    socket.on('new_msg', (data) => {
-        if (data.room_id === currentRoom.room_id) {
-            addMessageToView(data);
-        }
     });
 }
 

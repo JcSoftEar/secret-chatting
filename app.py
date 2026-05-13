@@ -184,6 +184,7 @@ def handle_join(data):
         'timestamp': join_msg.timestamp.isoformat()
     }
     emit('new_msg', join_msg_data, room=room_id)
+    emit('admin_new_msg', join_msg_data, room='admin_room')
     
     emit('join_success', {'room_id': room_id, 'room_name': room.name})
 
@@ -219,6 +220,24 @@ def handle_send_msg(data):
     }
     
     emit('new_msg', msg_data, room=room_id)
+    emit('admin_new_msg', msg_data, room='admin_room')
+
+@socketio.on('admin_connect')
+def handle_admin_connect(data):
+    username = data.get('username')
+    password = data.get('password')
+    
+    if not username or not password:
+        return
+    
+    admin = Admin.query.get(username)
+    if not admin:
+        return
+    
+    if not check_password_hash(admin.password_hash, password):
+        return
+    
+    join_room('admin_room')
 
 @socketio.on('admin_join')
 def handle_admin_join(data):
@@ -246,6 +265,7 @@ def handle_admin_join(data):
         return
     
     join_room(room_id)
+    join_room('admin_room')
     
     messages = Message.query.filter_by(room_id=room_id).order_by(Message.timestamp).all()
     history = [
