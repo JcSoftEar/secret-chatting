@@ -185,19 +185,7 @@ def handle_join(data):
     }
     emit('new_msg', join_msg_data, room=room_id)
     
-    messages = Message.query.filter_by(room_id=room_id).order_by(Message.timestamp).all()
-    history = [
-        {
-            'id': msg.id,
-            'room_id': msg.room_id,
-            'sender_name': msg.sender_name,
-            'content': msg.content,
-            'timestamp': msg.timestamp.isoformat()
-        }
-        for msg in messages
-    ]
-    
-    emit('join_success', {'room_id': room_id, 'room_name': room.name, 'history': history})
+    emit('join_success', {'room_id': room_id, 'room_name': room.name})
 
 @socketio.on('send_msg')
 def handle_send_msg(data):

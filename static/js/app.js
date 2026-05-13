@@ -57,9 +57,6 @@ function connectSocket(roomId, password) {
     socket.on('join_success', (data) => {
         currentRoom = data.room_id;
         showChatPage(data.room_name);
-        if (data.history && data.history.length > 0) {
-            data.history.forEach(msg => addMessage(msg));
-        }
     });
 
     socket.on('join_error', (data) => {
