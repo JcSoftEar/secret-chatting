@@ -19,7 +19,11 @@ def create_app(config_class=Config):
     app.config.from_object(config_class)
 
     db_path = app.config.get('SQLALCHEMY_DATABASE_URI', '')
-    if db_path.startswith('sqlite:///'):
+    if db_path.startswith('sqlite:////'):
+        db_dir = os.path.dirname(db_path.replace('sqlite:////', '/'))
+        if db_dir:
+            os.makedirs(db_dir, exist_ok=True)
+    elif db_path.startswith('sqlite:///'):
         db_dir = os.path.dirname(db_path.replace('sqlite:///', ''))
         if db_dir:
             os.makedirs(db_dir, exist_ok=True)
