@@ -4,6 +4,7 @@ from config import Config
 from models import db, Room, Message, Admin
 from datetime import datetime
 from werkzeug.security import check_password_hash, generate_password_hash
+import os
 
 socketio = SocketIO(cors_allowed_origins="*")
 
@@ -16,6 +17,12 @@ def is_db_initialized():
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
+
+    db_path = app.config.get('SQLALCHEMY_DATABASE_URI', '')
+    if db_path.startswith('sqlite:///'):
+        db_dir = os.path.dirname(db_path.replace('sqlite:///', ''))
+        if db_dir:
+            os.makedirs(db_dir, exist_ok=True)
     
     db.init_app(app)
     socketio.init_app(app)
