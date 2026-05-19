@@ -26,11 +26,20 @@ Secret Chatting 是一个轻量级的私密聊天室系统。用户通过房间�
 
 ```
 secret-chatting/
-├── app.py              # 应用入口，路由与 SocketIO 事件
+├── app.py              # 应用入口
 ├── config.py           # 配置管理
+├── extensions.py       # Flask 扩展实例（db, socketio）
 ├── models.py           # 数据模型（Room, Message, Admin）
 ├── requirements.txt    # Python 依赖
 ├── .env                # 环境变量
+├── routes/             # 路由蓝图
+│   ├── main.py         # 首页、系统初始化等通用路由
+│   └── admin.py        # 管理端 API 路由
+├── sockets/            # SocketIO 事件处理
+│   ├── chat.py         # 用户聊天事件（join, send_msg）
+│   └── admin.py        # 管理员事件（admin_connect, admin_join）
+├── utils/              # 工具函数
+│   └── __init__.py     # 数据库初始化检查等
 ├── static/
 │   ├── css/
 │   │   ├── style.css   # 客户端样式

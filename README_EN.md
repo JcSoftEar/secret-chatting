@@ -26,11 +26,20 @@ Secret Chatting is a lightweight private chat room system. Users join chat rooms
 
 ```
 secret-chatting/
-├── app.py              # Application entry, routes & SocketIO events
+├── app.py              # Application entry
 ├── config.py           # Configuration management
+├── extensions.py       # Flask extension instances (db, socketio)
 ├── models.py           # Data models (Room, Message, Admin)
 ├── requirements.txt    # Python dependencies
 ├── .env                # Environment variables
+├── routes/             # Route blueprints
+│   ├── main.py         # Home, setup and general routes
+│   └── admin.py        # Admin API routes
+├── sockets/            # SocketIO event handlers
+│   ├── chat.py         # User chat events (join, send_msg)
+│   └── admin.py        # Admin events (admin_connect, admin_join)
+├── utils/              # Utility functions
+│   └── __init__.py     # DB initialization check, etc.
 ├── static/
 │   ├── css/
 │   │   ├── style.css   # Client styles

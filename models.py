@@ -1,7 +1,6 @@
 from datetime import datetime
-from flask_sqlalchemy import SQLAlchemy
+from extensions import db
 
-db = SQLAlchemy()
 
 class Room(db.Model):
     room_id = db.Column(db.String(50), primary_key=True)
@@ -12,6 +11,7 @@ class Room(db.Model):
     def __repr__(self):
         return f'<Room {self.name}>'
 
+
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     room_id = db.Column(db.String(50), db.ForeignKey('room.room_id'), nullable=False)
@@ -21,6 +21,7 @@ class Message(db.Model):
 
     def __repr__(self):
         return f'<Message {self.id} in {self.room_id}>'
+
 
 class Admin(db.Model):
     username = db.Column(db.String(50), primary_key=True)
